@@ -7,7 +7,7 @@ local map = vim.keymap.set
 map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
-map("n", "<Leader>q", ":q<cr>", { desc = "Close buffer" })
+map("n", "<Leader>q", ":bd<cr>", { desc = "Close buffer" })
 map("n", "<Leader>fs", ":w<cr>", { desc = "Save file" })
 
 map("t", "<esc>", "<C-\\><C-n>")
