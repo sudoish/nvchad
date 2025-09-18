@@ -49,7 +49,6 @@ M.nvdash = { load_on_startup = true }
 M.ui = {
   tabufline = {
     enable = false,
-    lazyload = false,
   },
 }
 
