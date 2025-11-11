@@ -8,7 +8,18 @@ map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
 map("n", "<Leader>q", ":bd<cr>", { desc = "Close buffer" })
-map("n", "<Leader>fs", ":w<cr>", { desc = "Save file" })
+
+function save_buffer()
+  -- if file is .str, .strdl, or .strudel execute strudel command
+  local filetypes = { "str", "strdl", "strudel" }
+  if vim.tbl_contains(filetypes, vim.bo.filetype) then
+    vim.cmd "StrudelExecute"
+  end
+  -- save file
+  vim.cmd "w"
+end
+
+map("n", "<Leader>fs", save_buffer, { desc = "Save file" })
 
 map("t", "<esc>", "<C-\\><C-n>")
 

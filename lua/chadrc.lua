@@ -6,7 +6,7 @@
 local M = {}
 
 M.base46 = {
-  theme = "catppuccin",
+  theme = "tokyonight",
   transparency = true,
 
   -- Force transparency for common groups still setting bg

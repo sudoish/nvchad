@@ -1,4 +1,4 @@
-local util = require("conform.util")
+local util = require "conform.util"
 
 local options = {
   formatters_by_ft = {
@@ -12,12 +12,12 @@ local options = {
     ruff_format = {
       command = util.find_executable({
         ".venv/bin/ruff",
-        "ruff"
+        "ruff",
       }, "ruff"),
       args = { "format", "--stdin-filename", "$FILENAME", "-" },
-      cwd = util.root_file({ "pyproject.toml", "ruff.toml", ".ruff.toml", ".git" }),
+      cwd = util.root_file { "pyproject.toml", "ruff.toml", ".ruff.toml", ".git" },
       stdin = true,
-    }
+    },
   },
 
   format_on_save = {
@@ -25,7 +25,6 @@ local options = {
     timeout_ms = 200,
     lsp_fallback = true,
   },
-
 }
 
 return options
