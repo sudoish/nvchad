@@ -27,3 +27,9 @@ files["lua/plugins/*.lua"] = {
     "require", -- Lazy.nvim allows bare require
   },
 }
+
+files["specs/*.lua"] = {
+  globals = {
+    "assert", -- Busted test framework
+  },
+}
