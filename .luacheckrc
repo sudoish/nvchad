@@ -28,8 +28,7 @@ files["lua/plugins/*.lua"] = {
   },
 }
 
+-- Busted test files
 files["specs/*.lua"] = {
-  globals = {
-    "assert", -- Busted test framework
-  },
+  std = "+busted",
 }
