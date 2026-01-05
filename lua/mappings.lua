@@ -9,7 +9,7 @@ map("i", "jk", "<ESC>")
 
 map("n", "<Leader>q", ":bd<cr>", { desc = "Close buffer" })
 
-function save_buffer()
+local function save_buffer()
   -- if file is .str, .strdl, or .strudel execute strudel command
   local filetypes = { "str", "strdl", "strudel" }
   if vim.tbl_contains(filetypes, vim.bo.filetype) then

@@ -1,0 +1,42 @@
+# Pre-commit hooks for NvChad Configuration
+# See https://pre-commit.com for more information
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+        files: \.toml$
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-json
+        files: \.json$
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+
+  - repo: local
+    hooks:
+      - id: stylua
+        name: stylua
+        entry: stylua
+        language: system
+        types: [lua]
+        args: ['.']
+
+      - id: luacheck
+        name: luacheck
+        entry: luacheck
+        language: system
+        types: [lua]
+        args: ['.', '--quiet', '--ignore', '631']
+
+      - id: nvim-config-validation
+        name: nvim-config-validation
+        entry: nvim --headless -u init.lua -c "lua vim.cmd('quit')"
+        language: system
+        pass_filenames: false
+        files: \.lua$

@@ -1,0 +1,77 @@
+# GitHub Labels Configuration
+# Use: gh label create -f .github/labels.yml
+
+labels:
+  - name: bug
+    color: "d73a4a"
+    description: Something isn't working
+
+  - name: enhancement
+    color: "a2eeef"
+    description: New feature or improvement
+
+  - name: documentation
+    color: "0075ca"
+    description: Documentation improvements
+
+  - name: configuration
+    color: "0066cc"
+    description: Changes to configuration files
+
+  - name: performance
+    color: "fbca04"
+    description: Performance related changes
+
+  - name: dependencies
+    color: "0366d6"
+    description: Pull requests that update dependencies
+
+  - name: automated
+    color: "0052cc"
+    description: Automated changes
+
+  - name: question
+    color: "d876e3"
+    description: Questions and help requests
+
+  - name: triage
+    color: "ffffff"
+    description: Needs triage before work begins
+
+  - name: good first issue
+    color: "7057ff"
+    description: Good for newcomers
+
+  - name: help wanted
+    color: "008672"
+    description: Extra attention is needed
+
+  # Priority labels
+  - name: P0
+    color: "b60205"
+    description: Critical priority
+
+  - name: P1
+    color: "e11d21"
+    description: High priority
+
+  - name: P2
+    color: "fbca04"
+    description: Medium priority
+
+  - name: P3
+    color: "84b6eb"
+    description: Low priority
+
+  # Status labels
+  - name: in progress
+    color: "9be9a8"
+    description: Currently being worked on
+
+  - name: blocked
+    color: "d4c5f9"
+    description: Blocked by something else
+
+  - name: wontfix
+    color: "f4d5f9"
+    description: This will not be worked on

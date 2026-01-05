@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # Check for updates to Neovim plugins (via lazy-lock.json)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+
+    # Allow direct dependabot PRs without review for minor version updates
+    labels:
+      - "dependencies"
+      - "automated"

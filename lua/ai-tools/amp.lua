@@ -9,9 +9,9 @@ return {
     {
       "<leader>as",
       function()
-        local selection = require("amp.selection")
+        local selection = require "amp.selection"
         selection.update_and_broadcast()
-        require("amp.message").send_to_prompt("{selection}")
+        require("amp.message").send_to_prompt "{selection}"
       end,
       mode = "v",
       desc = "Send selection to Amp",
