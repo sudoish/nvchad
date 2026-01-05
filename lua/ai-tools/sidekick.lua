@@ -22,6 +22,13 @@ return {
         [DEFAULT_TOOL] = {
           cmd = { DEFAULT_TOOL },
         },
+        -- Separate tools for resume and continue with flags built into cmd
+        [DEFAULT_TOOL .. "-resume"] = {
+          cmd = { DEFAULT_TOOL, "--resume" },
+        },
+        [DEFAULT_TOOL .. "-continue"] = {
+          cmd = { DEFAULT_TOOL, "--continue" },
+        },
       },
     },
   },
@@ -43,19 +50,19 @@ return {
       end,
       desc = "Focus " .. (DEFAULT_TOOL:gsub("^%l", string.upper)),
     },
-    -- Resume AI tool
+    -- Resume AI tool (uses separate tool with --resume flag)
     {
       "<leader>ar",
       function()
-        require("sidekick.cli").toggle { name = DEFAULT_TOOL, args = { "--resume" }, focus = true }
+        require("sidekick.cli").toggle { name = DEFAULT_TOOL .. "-resume", focus = true }
       end,
       desc = "Resume " .. (DEFAULT_TOOL:gsub("^%l", string.upper)),
     },
-    -- Continue AI tool
+    -- Continue AI tool (uses separate tool with --continue flag)
     {
       "<leader>aC",
       function()
-        require("sidekick.cli").toggle { name = DEFAULT_TOOL, args = { "--continue" }, focus = true }
+        require("sidekick.cli").toggle { name = DEFAULT_TOOL .. "-continue", focus = true }
       end,
       desc = "Continue " .. (DEFAULT_TOOL:gsub("^%l", string.upper)),
     },
