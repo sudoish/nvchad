@@ -1,7 +1,7 @@
 return {
   trees_folder = ".trees",
   max_slug_length = 15,
-  default_ai_tool = "droid",
+  default_ai_tool = "claude",
   notifications = {
     success = true,
     errors = true,

@@ -6,7 +6,7 @@
 
 -- Default AI tool to use with Sidekick
 -- Change this variable to switch between different AI tools (e.g., "droid", "claude", "gpt", etc.)
-local DEFAULT_TOOL = "droid"
+local DEFAULT_TOOL = "claude"
 
 --------------------------------------------------------------------------------
 
