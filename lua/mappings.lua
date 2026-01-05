@@ -32,10 +32,18 @@ local function navigate(direction)
   end
 end
 
-map("n", "<C-h>", function() navigate("h") end, { desc = "Navigate left" })
-map("n", "<C-l>", function() navigate("l") end, { desc = "Navigate right" })
-map("n", "<C-k>", function() navigate("k") end, { desc = "Navigate up" })
-map("n", "<C-j>", function() navigate("j") end, { desc = "Navigate down" })
+map("n", "<C-h>", function()
+  navigate "h"
+end, { desc = "Navigate left" })
+map("n", "<C-l>", function()
+  navigate "l"
+end, { desc = "Navigate right" })
+map("n", "<C-k>", function()
+  navigate "k"
+end, { desc = "Navigate up" })
+map("n", "<C-j>", function()
+  navigate "j"
+end, { desc = "Navigate down" })
 
 map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
@@ -50,11 +58,11 @@ map("n", "<Leader>q", function()
     end
   end
 
-  local listed_bufs = vim.fn.getbufinfo({ buflisted = 1 })
+  local listed_bufs = vim.fn.getbufinfo { buflisted = 1 }
   if #listed_bufs <= 1 then
-    vim.cmd("quit")
+    vim.cmd "quit"
   else
-    vim.cmd("bd")
+    vim.cmd "bd"
   end
 end, { desc = "Close buffer or quit" })
 

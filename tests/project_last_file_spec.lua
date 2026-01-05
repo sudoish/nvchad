@@ -5,69 +5,70 @@ package.path = package.path .. ";./lua/?.lua"
 
 -- Mock vim globals for standalone testing outside neovim
 -- Must be set before requiring the module
-_G.vim = _G.vim or {
-  fn = {
-    stdpath = function(what)
-      if what == "data" then
-        return "/tmp/nvim-test-data"
-      end
-      return ""
-    end,
-    systemlist = function()
-      return { "/tmp/test-project" }
-    end,
-    argc = function()
-      return 0
-    end,
-    expand = function()
-      return ""
-    end,
-    filereadable = function()
-      return 1
-    end,
-    json_encode = function(data)
-      local result = "{"
-      local first = true
-      for k, v in pairs(data) do
-        if not first then
-          result = result .. ","
+_G.vim = _G.vim
+  or {
+    fn = {
+      stdpath = function(what)
+        if what == "data" then
+          return "/tmp/nvim-test-data"
         end
-        result = result .. '"' .. k .. '":"' .. v .. '"'
-        first = false
-      end
-      return result .. "}"
+        return ""
+      end,
+      systemlist = function()
+        return { "/tmp/test-project" }
+      end,
+      argc = function()
+        return 0
+      end,
+      expand = function()
+        return ""
+      end,
+      filereadable = function()
+        return 1
+      end,
+      json_encode = function(data)
+        local result = "{"
+        local first = true
+        for k, v in pairs(data) do
+          if not first then
+            result = result .. ","
+          end
+          result = result .. '"' .. k .. '":"' .. v .. '"'
+          first = false
+        end
+        return result .. "}"
+      end,
+      json_decode = function(str)
+        local result = {}
+        for k, v in str:gmatch '"([^"]+)":"([^"]+)"' do
+          result[k] = v
+        end
+        return result
+      end,
+    },
+    v = {
+      shell_error = 0,
+    },
+    cmd = {
+      edit = function() end,
+    },
+    api = {
+      nvim_create_augroup = function()
+        return 1
+      end,
+      nvim_create_autocmd = function() end,
+    },
+    schedule = function(fn)
+      fn()
     end,
-    json_decode = function(str)
-      local result = {}
-      for k, v in str:gmatch('"([^"]+)":"([^"]+)"') do
-        result[k] = v
-      end
-      return result
-    end,
-  },
-  v = {
-    shell_error = 0,
-  },
-  cmd = {
-    edit = function() end,
-  },
-  api = {
-    nvim_create_augroup = function()
-      return 1
-    end,
-    nvim_create_autocmd = function() end,
-  },
-  schedule = function(fn)
-    fn()
-  end,
-}
+  }
 
 describe("Project Last File", function()
   local project_last_file
 
   before_each(function()
     package.loaded["project-last-file"] = nil
-    project_last_file = require("project-last-file")
+    project_last_file = require "project-last-file"
   end)
 
   it("should load the module", function()
@@ -111,7 +112,7 @@ describe("Project Last File", function()
     end)
 
     it("should return nil for unknown projects", function()
-      local result = project_last_file.get_last_file("/nonexistent/project/path")
+      local result = project_last_file.get_last_file "/nonexistent/project/path"
       assert.is_nil(result, "should return nil for unknown projects")
     end)
   end)
@@ -122,13 +123,13 @@ describe("Project Last File", function()
     end)
 
     it("should return false for special buffers", function()
-      assert.is_false(project_last_file.is_restorable_file(""), "empty path should not be restorable")
-      assert.is_false(project_last_file.is_restorable_file("term://"), "terminal should not be restorable")
-      assert.is_false(project_last_file.is_restorable_file("oil://"), "oil should not be restorable")
+      assert.is_false(project_last_file.is_restorable_file "", "empty path should not be restorable")
+      assert.is_false(project_last_file.is_restorable_file "term://", "terminal should not be restorable")
+      assert.is_false(project_last_file.is_restorable_file "oil://", "oil should not be restorable")
     end)
 
     it("should return true for regular files", function()
-      assert.is_true(project_last_file.is_restorable_file("/path/to/file.lua"), "lua file should be restorable")
+      assert.is_true(project_last_file.is_restorable_file "/path/to/file.lua", "lua file should be restorable")
     end)
   end)
 end)
