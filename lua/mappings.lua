@@ -46,7 +46,23 @@ map("n", "<C-j>", function() navigate("j") end, { desc = "Navigate down" })
 map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
-map("n", "<Leader>q", ":bd<cr>", { desc = "Close buffer" })
+map("n", "<Leader>q", function()
+  -- Check if we're in a sidekick/terminal buffer
+  if vim.bo.buftype == "terminal" then
+    local ok, sidekick = pcall(require, "sidekick.cli")
+    if ok then
+      sidekick.toggle()
+      return
+    end
+  end
+
+  local listed_bufs = vim.fn.getbufinfo({ buflisted = 1 })
+  if #listed_bufs <= 1 then
+    vim.cmd("quit")
+  else
+    vim.cmd("bd")
+  end
+end, { desc = "Close buffer or quit" })
 
 local function save_buffer()
   -- if file is .str, .strdl, or .strudel execute strudel command

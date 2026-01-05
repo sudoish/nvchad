@@ -44,3 +44,8 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
 --     vim.bo.filetype = "haskell"
 --   end,
 -- })
+
+-- Restore last opened file per project
+require("project-last-file").setup()
+
+return {}
