@@ -1,7 +1,7 @@
 -- AI Completion and Chat Tools
 -- Configure which AI tools to use by changing the variables below
 
-local ai_tools = require("ai-tools")
+local ai_tools = require "ai-tools"
 
 --------------------------------------------------------------------------------
 -- CONFIGURATION

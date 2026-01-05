@@ -8,16 +8,16 @@ local M = {}
 
 -- Available AI tools by category
 M.chat = {
-  "claudecode",  -- Claude Code native plugin
-  "sidekick",    -- Sidekick.nvim (universal CLI wrapper for claude, droid, etc.)
-  "amp",         -- Sourcegraph Amp
-  "augment",     -- Augment Code
-  "droid",       -- Droid (Factory AI agent)
+  "claudecode", -- Claude Code native plugin
+  "sidekick", -- Sidekick.nvim (universal CLI wrapper for claude, droid, etc.)
+  "amp", -- Sourcegraph Amp
+  "augment", -- Augment Code
+  "droid", -- Droid (Factory AI agent)
 }
 
 M.completion = {
-  "supermaven",  -- Supermaven inline completion
-  "copilot",     -- GitHub Copilot
+  "supermaven", -- Supermaven inline completion
+  "copilot", -- GitHub Copilot
 }
 
 -- Get the configuration for a specific AI tool
