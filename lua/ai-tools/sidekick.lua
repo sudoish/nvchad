@@ -1,4 +1,15 @@
 -- Sidekick.nvim - Universal AI CLI integration
+
+--------------------------------------------------------------------------------
+-- CONFIGURATION
+--------------------------------------------------------------------------------
+
+-- Default AI tool to use with Sidekick
+-- Change this variable to switch between different AI tools (e.g., "droid", "claude", "gpt", etc.)
+local DEFAULT_TOOL = "claude"
+
+--------------------------------------------------------------------------------
+
 return {
   "folke/sidekick.nvim",
   opts = {
@@ -7,43 +18,48 @@ return {
         backend = "tmux",
         enabled = true,
       },
+      tools = {
+        [DEFAULT_TOOL] = {
+          cmd = { DEFAULT_TOOL },
+        },
+      },
     },
   },
   keys = {
-    -- Toggle Claude (matching <leader>ac from claude-code)
+    -- Toggle AI tool
     {
       "<leader>ac",
       function()
-        require("sidekick.cli").toggle { name = "claude", focus = true }
+        require("sidekick.cli").toggle { name = DEFAULT_TOOL, focus = true }
       end,
-      desc = "Toggle Claude",
+      desc = "Toggle " .. (DEFAULT_TOOL:gsub("^%l", string.upper)),
       mode = { "n", "v" },
     },
-    -- Focus Claude (matching <leader>af from claude-code)
+    -- Focus AI tool
     {
       "<leader>af",
       function()
-        require("sidekick.cli").focus { name = "claude" }
+        require("sidekick.cli").focus { name = DEFAULT_TOOL }
       end,
-      desc = "Focus Claude",
+      desc = "Focus " .. (DEFAULT_TOOL:gsub("^%l", string.upper)),
     },
-    -- Resume Claude (matching <leader>ar from claude-code)
+    -- Resume AI tool
     {
       "<leader>ar",
       function()
-        require("sidekick.cli").toggle { name = "claude", args = { "--resume" }, focus = true }
+        require("sidekick.cli").toggle { name = DEFAULT_TOOL, args = { "--resume" }, focus = true }
       end,
-      desc = "Resume Claude",
+      desc = "Resume " .. (DEFAULT_TOOL:gsub("^%l", string.upper)),
     },
-    -- Continue Claude (matching <leader>aC from claude-code)
+    -- Continue AI tool
     {
       "<leader>aC",
       function()
-        require("sidekick.cli").toggle { name = "claude", args = { "--continue" }, focus = true }
+        require("sidekick.cli").toggle { name = DEFAULT_TOOL, args = { "--continue" }, focus = true }
       end,
-      desc = "Continue Claude",
+      desc = "Continue " .. (DEFAULT_TOOL:gsub("^%l", string.upper)),
     },
-    -- Select CLI tool (matching <leader>am from claude-code)
+    -- Select AI tool
     {
       "<leader>am",
       function()
@@ -51,7 +67,7 @@ return {
       end,
       desc = "Select AI tool",
     },
-    -- Add current buffer/file (matching <leader>ab from claude-code)
+    -- Add current buffer/file
     {
       "<leader>ab",
       function()
@@ -59,16 +75,16 @@ return {
       end,
       desc = "Add current buffer",
     },
-    -- Send selection (matching <leader>as from claude-code visual mode)
+    -- Send selection
     {
       "<leader>as",
       function()
         require("sidekick.cli").send { selection = true }
       end,
       mode = "v",
-      desc = "Send to Claude",
+      desc = "Send to " .. (DEFAULT_TOOL:gsub("^%l", string.upper)),
     },
-    -- Accept diff (matching <leader>ay from claude-code)
+    -- Accept diff
     {
       "<leader>ay",
       function()
@@ -76,7 +92,7 @@ return {
       end,
       desc = "Accept diff",
     },
-    -- Deny diff (matching <leader>ad from claude-code)
+    -- Deny diff
     {
       "<leader>ad",
       function()
@@ -84,7 +100,7 @@ return {
       end,
       desc = "Deny diff",
     },
-    -- Quick toggle with Ctrl+. (bonus from original sidekick config)
+    -- Quick toggle with Ctrl+.
     {
       "<c-.>",
       function()

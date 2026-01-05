@@ -2,6 +2,7 @@
 
 ## Build/Lint/Test Commands
 - **Format**: `stylua .` (2 spaces, 120 cols, double quotes, no call parens)
+- **Lint**: `luacheck .` (static analysis for Lua code)
 - **Validate**: `nvim --headless -u init.lua -c "lua vim.cmd('quit')"` or `:checkhealth`
 
 ## Architecture

@@ -1,0 +1,18 @@
+# Codeowners for NvChad Configuration
+# Format: <path> <username/team>
+
+# Default owner
+* @sudoish
+
+# Plugin configurations
+lua/plugins/ @sudoish
+lua/configs/ @sudoish
+
+# AI tools configuration
+lua/ai-tools/ @sudoish
+
+# Core configuration
+lua/chadrc.lua @sudoish
+lua/options.lua @sudoish
+lua/mappings.lua @sudoish
+lua/autocmds.lua @sudoish

@@ -9,9 +9,10 @@ local M = {}
 -- Available AI tools by category
 M.chat = {
   "claudecode",  -- Claude Code native plugin
-  "sidekick",    -- Sidekick.nvim (universal CLI wrapper for claude, etc.)
+  "sidekick",    -- Sidekick.nvim (universal CLI wrapper for claude, droid, etc.)
   "amp",         -- Sourcegraph Amp
   "augment",     -- Augment Code
+  "droid",       -- Droid (Factory AI agent)
 }
 
 M.completion = {

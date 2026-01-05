@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: stable
+
+      - name: Validate configuration
+        run: nvim --headless -u init.lua -c "lua vim.cmd('quit')" --noplugin
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Lua
+        uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "5.4.0"
+
+      - name: Install luacheck
+        run: |
+          wget https://github.com/lunarmodules/luacheck/releases/download/1.1.0/luacheck-1.1.0-linux-x86_64.zip -O luacheck.zip
+          unzip luacheck.zip
+          sudo cp luacheck-1.1.0-linux-x86_64/luacheck /usr/local/bin/
+          chmod +x /usr/local/bin/luacheck
+
+      - name: Run luacheck
+        run: luacheck .
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install stylua
+        uses: JohnnyMorganz/stylua-action@v4
+        with:
+          version: latest
+          token: ${{ secrets.GITHUB_TOKEN }}
