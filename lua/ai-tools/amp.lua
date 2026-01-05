@@ -5,7 +5,7 @@ return {
   lazy = false,
   opts = { auto_start = true, log_level = "info" },
   keys = {
-    { "<leader>at", "<cmd>AmpStatus<cr>", desc = "Toggle Amp status" },
+    { "<leader>aS", "<cmd>AmpStatus<cr>", desc = "Amp status" },
     {
       "<leader>as",
       function()
