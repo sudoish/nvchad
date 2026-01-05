@@ -4,7 +4,7 @@ describe("ai-tools.task-workflow.config", function()
   before_each(function()
     -- Clear cached module to ensure fresh load each test
     package.loaded["ai-tools.task-workflow.config"] = nil
-    config = require("ai-tools.task-workflow.config")
+    config = require "ai-tools.task-workflow.config"
   end)
 
   describe("module loading", function()
