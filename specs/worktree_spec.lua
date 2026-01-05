@@ -140,7 +140,7 @@ describe("Git Worktree Management Module", function()
     end)
 
     it("should reject branch names with control characters", function()
-      local valid, err = worktree.validate_branch_name("feature\tbranch")
+      local valid, err = worktree.validate_branch_name "feature\tbranch"
       assert.is_false(valid, "should reject tab character")
       assert.is_string(err)
     end)

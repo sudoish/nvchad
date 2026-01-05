@@ -204,7 +204,7 @@ function M.create(branch_name, path)
   end
 
   -- Check if the branch exists
-  local branch_check = vim.fn.system("git show-ref --verify --quiet refs/heads/" .. branch_name .. " 2>/dev/null")
+  vim.fn.system("git show-ref --verify --quiet refs/heads/" .. branch_name .. " 2>/dev/null")
   local branch_exists = vim.v.shell_error == 0
 
   -- Create the worktree
