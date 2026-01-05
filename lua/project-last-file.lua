@@ -1,13 +1,13 @@
 local M = {}
 
-local data_path = vim.fn.stdpath("data") .. "/project_last_files.json"
+local data_path = vim.fn.stdpath "data" .. "/project_last_files.json"
 
 local function read_data()
   local file = io.open(data_path, "r")
   if not file then
     return {}
   end
-  local content = file:read("*a")
+  local content = file:read "*a"
   file:close()
   if content == "" then
     return {}
@@ -117,7 +117,7 @@ function M.track_current_file()
     return
   end
 
-  local filepath = vim.fn.expand("%:p")
+  local filepath = vim.fn.expand "%:p"
   M.save_last_file(project_root, filepath)
 end
 
