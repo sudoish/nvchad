@@ -1,3 +1,5 @@
+package.path = package.path .. ";./lua/?.lua;./lua/?/init.lua"
+
 describe("ai-tools.task-workflow.config", function()
   local config
 
