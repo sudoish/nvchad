@@ -62,24 +62,62 @@ function M.cleanup(branch_name, worktree_path)
   }
 end
 
---- Initialize AI chat with task context
---- Toggles sidekick and optionally sends task context
+--- Build the task prompt from task data
+---@param task table The task { title, description }
+---@return string prompt The formatted prompt
+function M.build_task_prompt(task)
+  local prompt = "## Task: " .. task.title
+  if task.description and task.description ~= "" then
+    prompt = prompt .. "\n\n" .. task.description
+  end
+  return prompt
+end
+
+--- Initialize AI chat from saved task file (called in new neovim instance)
+--- This is meant to be called via nvim -c from the new tmux window
+function M.initialize_from_saved_task()
+  vim.defer_fn(function()
+    local task = task_input.get_task()
+
+    if not task then
+      vim.notify("No saved task found", vim.log.levels.WARN)
+      return
+    end
+
+    -- Toggle sidekick with the AI tool
+    local ok, err = pcall(function()
+      local sidekick_cli = require "sidekick.cli"
+      sidekick_cli.toggle { name = config.default_ai_tool, focus = true }
+    end)
+
+    if not ok then
+      vim.notify("Failed to toggle sidekick: " .. tostring(err), vim.log.levels.WARN)
+      return
+    end
+
+    -- Send the task prompt after sidekick has opened
+    vim.defer_fn(function()
+      local send_ok, send_err = pcall(function()
+        local sidekick_cli = require "sidekick.cli"
+        local prompt = M.build_task_prompt(task)
+        sidekick_cli.send { msg = prompt }
+      end)
+
+      if not send_ok then
+        vim.notify("Failed to send task prompt: " .. tostring(send_err), vim.log.levels.WARN)
+      end
+    end, 500)
+  end, 1000) -- Wait for neovim to fully load
+end
+
+--- Initialize AI chat with task context (deprecated - kept for API compatibility)
+--- Note: This runs in the original window. For new tmux windows, use initialize_from_saved_task()
 ---@param task table The task { title, description }
 ---@param worktree_path string The worktree path (for context)
 ---@return table result { success: boolean, error: string|nil }
 function M.initialize_ai_chat(task, worktree_path)
-  local ok, err = pcall(function()
-    local sidekick_cli = require "sidekick.cli"
-    sidekick_cli.toggle { name = config.default_ai_tool, focus = true }
-  end)
-
-  if not ok then
-    return {
-      success = false,
-      error = "Failed to toggle sidekick: " .. tostring(err),
-    }
-  end
-
+  -- This function is now a no-op since AI chat is initialized in the new window
+  -- via the nvim -c command that calls initialize_from_saved_task()
   return {
     success = true,
     error = nil,
@@ -158,12 +196,16 @@ function M.create_environment(task, callback)
     -- Continue anyway, user can switch manually
   end
 
-  -- Step 4: Send nvim command to the new window
-  local send_result = tmux.send_command(branch_name, "nvim .")
-  if not send_result.success then
-    notify("Warning: Could not start nvim in new window", vim.log.levels.WARN)
-    -- Continue anyway, user can start nvim manually
-  end
+  -- Step 4: Wait a moment for the window to be ready, then send nvim command
+  vim.defer_fn(function()
+    local nvim_cmd = [[nvim . -c "lua require('ai-tools.task-workflow').initialize_from_saved_task()"]]
+    local send_result = tmux.send_command(branch_name, nvim_cmd)
+    if not send_result.success then
+      notify("Warning: Could not start nvim in new window: " .. (send_result.error or "unknown"), vim.log.levels.WARN)
+    else
+      notify("Starting nvim in task window...", vim.log.levels.INFO)
+    end
+  end, 500) -- Wait 500ms for window to be ready
 
   -- Success!
   notify("Task environment created: " .. branch_name, vim.log.levels.INFO)
@@ -198,18 +240,12 @@ function M.start(callback)
     end
 
     -- Step 2: Create the development environment
+    -- Note: AI chat initialization happens automatically in the new window
+    -- via the nvim -c command that calls initialize_from_saved_task()
     M.create_environment(task, function(env_result)
       if not env_result.success then
         callback(env_result)
         return
-      end
-
-      -- Step 3: Initialize AI chat (in the original window, not the new one)
-      -- Note: The sidekick toggle happens in the current window context
-      local chat_result = M.initialize_ai_chat(task, env_result.result.worktree_path)
-      if not chat_result.success then
-        notify("Warning: Could not initialize AI chat", vim.log.levels.WARN)
-        -- Continue anyway, environment is already created
       end
 
       callback(env_result)

@@ -8,6 +8,11 @@ _G.vim.fn = _G.vim.fn or {}
 _G.vim.env = _G.vim.env or {}
 _G.vim.v = _G.vim.v or { shell_error = 0 }
 
+-- Add shellescape mock
+_G.vim.fn.shellescape = function(str)
+  return "'" .. str:gsub("'", "'\\''") .. "'"
+end
+
 describe("Tmux Window Management Module", function()
   local tmux
   local original_vim_fn_system

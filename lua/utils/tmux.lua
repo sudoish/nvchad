@@ -202,8 +202,11 @@ function M.send_command(window_name, command)
     }
   end
 
-  -- Send the command using send-keys with Enter at the end
-  local cmd = string.format([[tmux send-keys -t "%s" "%s" Enter]], window_name, command)
+  -- Use sh to execute the command to avoid shell interpretation issues
+  local full_command = "sh -c " .. vim.fn.shellescape(command)
+
+  -- Send using send-keys with the full command
+  local cmd = string.format('tmux send-keys -t "%s" %s Enter', window_name, vim.fn.shellescape(full_command))
   local output, success = exec_tmux(cmd)
 
   if not success then

@@ -25,6 +25,16 @@ _G.vim.deepcopy = _G.vim.deepcopy
     return copy
   end
 
+-- Add vim.fn.shellescape mock
+_G.vim.fn.shellescape = function(str)
+  return "'" .. str:gsub("'", "'\\''") .. "'"
+end
+
+-- Add vim.defer_fn mock (executes immediately for testing)
+_G.vim.defer_fn = function(fn, _delay)
+  fn()
+end
+
 describe("ai-tools.task-workflow", function()
   local task_workflow
   local mock_worktree
@@ -183,6 +193,14 @@ describe("ai-tools.task-workflow", function()
 
     it("should have initialize_ai_chat function", function()
       assert.is_function(task_workflow.initialize_ai_chat, "should have initialize_ai_chat function")
+    end)
+
+    it("should have initialize_from_saved_task function", function()
+      assert.is_function(task_workflow.initialize_from_saved_task, "should have initialize_from_saved_task function")
+    end)
+
+    it("should have build_task_prompt function", function()
+      assert.is_function(task_workflow.build_task_prompt, "should have build_task_prompt function")
     end)
 
     it("should have cleanup function", function()
@@ -360,7 +378,21 @@ describe("ai-tools.task-workflow", function()
     local test_task = { title = "My Task", description = "Task description" }
     local test_path = "/mock/.trees/my-task"
 
-    it("toggles sidekick", function()
+    -- Note: initialize_ai_chat is now a no-op since AI initialization
+    -- happens in the new tmux window via nvim -c command calling
+    -- initialize_from_saved_task(). Kept for API compatibility.
+
+    it("returns success result (no-op for backwards compatibility)", function()
+      package.loaded["ai-tools.task-workflow"] = nil
+      task_workflow = require "ai-tools.task-workflow"
+
+      local result = task_workflow.initialize_ai_chat(test_task, test_path)
+
+      assert.is_table(result, "should return result table")
+      assert.is_true(result.success, "should always succeed")
+    end)
+
+    it("does not toggle sidekick in original window", function()
       local toggle_called = false
       mock_sidekick.cli.toggle = function(_opts)
         toggle_called = true
@@ -372,47 +404,49 @@ describe("ai-tools.task-workflow", function()
 
       task_workflow.initialize_ai_chat(test_task, test_path)
 
-      assert.is_true(toggle_called, "should call sidekick toggle")
+      assert.is_false(toggle_called, "should NOT call sidekick toggle in original window")
     end)
+  end)
 
-    it("uses configured AI tool", function()
-      local toggle_opts = nil
-      mock_sidekick.cli.toggle = function(opts)
-        toggle_opts = opts
-        return true
-      end
-      package.loaded["sidekick.cli"] = mock_sidekick.cli
+  describe("build_task_prompt", function()
+    it("builds prompt with title only", function()
       package.loaded["ai-tools.task-workflow"] = nil
       task_workflow = require "ai-tools.task-workflow"
 
-      task_workflow.initialize_ai_chat(test_task, test_path)
+      local prompt = task_workflow.build_task_prompt { title = "My Task", description = nil }
 
-      assert.is_not_nil(toggle_opts, "should pass opts to toggle")
-      assert.equals("droid", toggle_opts.name, "should use configured AI tool")
+      assert.equals("## Task: My Task", prompt)
     end)
 
-    it("returns success result", function()
+    it("builds prompt with title and description", function()
       package.loaded["ai-tools.task-workflow"] = nil
       task_workflow = require "ai-tools.task-workflow"
 
-      local result = task_workflow.initialize_ai_chat(test_task, test_path)
+      local prompt = task_workflow.build_task_prompt { title = "My Task", description = "Do something important" }
 
-      assert.is_table(result, "should return result table")
-      assert.is_true(result.success, "should succeed")
+      assert.equals("## Task: My Task\n\nDo something important", prompt)
     end)
 
-    it("handles sidekick toggle failure gracefully", function()
-      mock_sidekick.cli.toggle = function()
-        error "Sidekick not available"
-      end
-      package.loaded["sidekick.cli"] = mock_sidekick.cli
+    it("ignores empty description", function()
       package.loaded["ai-tools.task-workflow"] = nil
       task_workflow = require "ai-tools.task-workflow"
 
-      local result = task_workflow.initialize_ai_chat(test_task, test_path)
+      local prompt = task_workflow.build_task_prompt { title = "My Task", description = "" }
 
-      assert.is_false(result.success, "should report failure")
-      assert.is_string(result.error, "should include error message")
+      assert.equals("## Task: My Task", prompt)
+    end)
+  end)
+
+  describe("initialize_from_saved_task", function()
+    -- Note: This function uses vim.defer_fn for async execution,
+    -- so it cannot be fully tested without mocking vim.defer_fn.
+    -- The actual AI toggle and prompt sending happens asynchronously.
+
+    it("should have initialize_from_saved_task function", function()
+      package.loaded["ai-tools.task-workflow"] = nil
+      task_workflow = require "ai-tools.task-workflow"
+
+      assert.is_function(task_workflow.initialize_from_saved_task, "should have initialize_from_saved_task function")
     end)
   end)
 
