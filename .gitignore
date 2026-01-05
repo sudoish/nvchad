@@ -45,3 +45,4 @@ backup/
 
 # OS files
 Thumbs.db
+.trees/
