@@ -16,6 +16,61 @@ local function trim(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+--- Generate a tmux-safe window name from any string
+---@param text string The input text
+---@return string safe_name A tmux-safe window name
+function M.generate_safe_name(text)
+  if type(text) ~= "string" or #text == 0 then
+    return "task"
+  end
+
+  local result = {}
+  local i = 1
+
+  while i <= #text do
+    local char = text:sub(i, i)
+    local byte = string.byte(char)
+
+    -- Allow alphanumeric characters
+    if byte and ((byte >= 48 and byte <= 57) or (byte >= 65 and byte <= 90) or (byte >= 97 and byte <= 122)) then
+      result[#result + 1] = char:lower()
+    -- Allow underscores and hyphens as separators
+    elseif char == "_" or char == "-" then
+      if #result > 0 and result[#result] ~= "_" and result[#result] ~= "-" then
+        result[#result + 1] = "_"
+      end
+    -- Replace other characters with underscores
+    elseif #result > 0 and result[#result] ~= "_" then
+      result[#result + 1] = "_"
+    end
+
+    i = i + 1
+  end
+
+  local safe_name = table.concat(result)
+
+  -- Remove leading/trailing underscores
+  safe_name = safe_name:gsub("^_+", "")
+  safe_name = safe_name:gsub("_+$", "")
+
+  -- Ensure it doesn't start with a hyphen
+  if safe_name:sub(1, 1) == "-" then
+    safe_name = "_" .. safe_name:sub(2)
+  end
+
+  -- Limit length for tmux window names (reasonable limit)
+  if #safe_name > 50 then
+    safe_name = safe_name:sub(1, 50)
+  end
+
+  -- Ensure we have at least one character
+  if safe_name == "" then
+    safe_name = "task"
+  end
+
+  return safe_name
+end
+
 --- Helper function to execute tmux command and check result
 ---@param cmd string The tmux command to execute
 ---@return string output The command output
@@ -202,11 +257,8 @@ function M.send_command(window_name, command)
     }
   end
 
-  -- Use sh to execute the command to avoid shell interpretation issues
-  local full_command = "sh -c " .. vim.fn.shellescape(command)
-
-  -- Send using send-keys with the full command
-  local cmd = string.format('tmux send-keys -t "%s" %s Enter', window_name, vim.fn.shellescape(full_command))
+  -- Send the command directly - tmux send-keys types into the target shell
+  local cmd = string.format('tmux send-keys -t "%s" %s Enter', window_name, vim.fn.shellescape(command))
   local output, success = exec_tmux(cmd)
 
   if not success then

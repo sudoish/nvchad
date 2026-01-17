@@ -27,8 +27,8 @@ local function validate_title(title)
   if not title or title == "" then
     return false, "Title cannot be empty"
   end
-  if #title > 200 then
-    return false, "Title cannot exceed 200 characters"
+  if #title > 1000 then
+    return false, "Title cannot exceed 1000 characters"
   end
   return true
 end

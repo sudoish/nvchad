@@ -27,10 +27,10 @@ end
 
 --- Cleanup resources on failure
 --- Removes worktree and kills tmux window
----@param branch_name string The branch/window name
+---@param window_name string The tmux window name
 ---@param worktree_path string The worktree path to remove
 ---@return table result { success: boolean, error: string|nil }
-function M.cleanup(branch_name, worktree_path)
+function M.cleanup(window_name, worktree_path)
   local errors = {}
 
   -- Try to remove worktree
@@ -42,8 +42,8 @@ function M.cleanup(branch_name, worktree_path)
   end
 
   -- Try to kill tmux window (continue even if worktree removal failed)
-  if branch_name and branch_name ~= "" then
-    local tmux_result = tmux.kill_window(branch_name)
+  if window_name and window_name ~= "" then
+    local tmux_result = tmux.kill_window(window_name)
     if not tmux_result.success then
       table.insert(errors, "Tmux: " .. (tmux_result.error or "unknown error"))
     end
@@ -149,9 +149,9 @@ function M.create_environment(task, callback)
     return
   end
 
-  -- Generate slugified branch name
-  local branch_name = slugify.slugify(task.title)
-  if branch_name == "" then
+  -- Generate git flow style branch name
+  local slug = slugify.slugify(task.title)
+  if slug == "" then
     callback {
       success = false,
       error = "Failed to generate branch name from task title",
@@ -159,6 +159,16 @@ function M.create_environment(task, callback)
     }
     return
   end
+
+  local branch_name
+  if config.git_flow.enabled then
+    branch_name = config.git_flow.default_type .. "/" .. slug
+  else
+    branch_name = slug
+  end
+
+  -- Generate tmux-safe window name (without forward slashes)
+  local window_name = tmux.generate_safe_name(task.title)
 
   -- Build worktree path
   local worktree_path = config.trees_folder .. "/" .. branch_name
@@ -176,7 +186,7 @@ function M.create_environment(task, callback)
   end
 
   -- Step 2: Create tmux window
-  local tmux_result = tmux.create_window(branch_name, worktree_path)
+  local tmux_result = tmux.create_window(window_name, worktree_path)
   if not tmux_result.success then
     -- Cleanup: remove the worktree we just created
     worktree.remove(worktree_path)
@@ -190,7 +200,7 @@ function M.create_environment(task, callback)
   end
 
   -- Step 3: Switch to the new window
-  local switch_result = tmux.switch_window(branch_name)
+  local switch_result = tmux.switch_window(window_name)
   if not switch_result.success then
     notify("Warning: Could not switch to new window", vim.log.levels.WARN)
     -- Continue anyway, user can switch manually
@@ -199,7 +209,7 @@ function M.create_environment(task, callback)
   -- Step 4: Wait a moment for the window to be ready, then send nvim command
   vim.defer_fn(function()
     local nvim_cmd = [[nvim . -c "lua require('ai-tools.task-workflow').initialize_from_saved_task()"]]
-    local send_result = tmux.send_command(branch_name, nvim_cmd)
+    local send_result = tmux.send_command(window_name, nvim_cmd)
     if not send_result.success then
       notify("Warning: Could not start nvim in new window: " .. (send_result.error or "unknown"), vim.log.levels.WARN)
     else
@@ -214,6 +224,7 @@ function M.create_environment(task, callback)
     error = nil,
     result = {
       branch_name = branch_name,
+      window_name = window_name,
       worktree_path = worktree_path,
       window_id = tmux_result.window_id,
       task = task,

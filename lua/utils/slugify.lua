@@ -1,6 +1,6 @@
 local M = {}
 
-local MAX_LENGTH = 15
+-- No length limit for git flow branch names
 
 local function is_alphanumeric_char(char)
   local byte = string.byte(char)
@@ -42,9 +42,7 @@ function M.slugify(text)
   slug = slug:gsub("^%-+", "")
   slug = slug:gsub("%-+$", "")
 
-  if #slug > MAX_LENGTH then
-    slug = slug:sub(1, MAX_LENGTH - 3) .. "..."
-  end
+  -- No length truncation - allow full slug for git flow branch names
 
   return slug
 end
