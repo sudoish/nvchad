@@ -28,7 +28,14 @@ local function navigate(direction)
   if at_edge == "0" then
     vim.fn.system("tmux select-pane -" .. tmux_pane_dir)
   elseif tmux_window_cmd then
-    vim.fn.jobstart({ "tmux", tmux_window_cmd }, { detach = true })
+    -- Handle tmux window navigation with wrap-around
+    if direction == "h" then
+      -- For left navigation, go to previous window with wrap-around
+      vim.fn.system("tmux select-window -t -1")
+    elseif direction == "l" then
+      -- For right navigation, go to next window with wrap-around
+      vim.fn.system("tmux select-window -t +1")
+    end
   end
 end
 
