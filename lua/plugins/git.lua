@@ -1,32 +1,51 @@
--- Smart git commit with AI assistance
-local function smart_commit()
-  -- Get git diff (staged first, then unstaged if no staged changes)
-  local staged_diff = vim.fn.system "git diff --cached"
-  local diff = staged_diff
-  local diff_type = "staged"
+return {
+  {
+    "tpope/vim-fugitive",
+    lazy = false,
+    config = function()
+      -- Git remaps
+      vim.keymap.set("n", "<leader>gs", ":G<CR>", { desc = "Git status" })
+      vim.keymap.set("n", "<leader>ga", ":G add %<CR>", { desc = "Git add current file" })
+      vim.keymap.set("n", "<leader>gA", ":G add .<CR>", { desc = "Git add all files" })
+      vim.keymap.set("n", "<leader>gc", ":G commit --no-verify<CR>", { desc = "Git commit" })
 
-  -- If no staged changes, get unstaged changes
-  if vim.fn.trim(staged_diff) == "" then
-    diff = vim.fn.system "git diff"
-    diff_type = "unstaged"
-  end
+      local function pre_commit_check()
+        local cmd = "pre-commit"
 
-  -- If still no changes, check for untracked files
-  if vim.fn.trim(diff) == "" then
-    local status = vim.fn.system "git status --short"
-    if vim.fn.trim(status) == "" then
-      vim.notify("No changes to commit", vim.log.levels.WARN)
-      return
-    end
-    diff = "No diff available. Untracked files:\n" .. status
-    diff_type = "untracked"
-  end
+        -- Run pre-commit hook on a split buffer bottom
+        vim.cmd "belowright vsplit"
+        vim.cmd("terminal " .. cmd)
+      end
 
-  -- Get recent commit messages for style reference
-  local recent_commits = vim.fn.system "git log --oneline -5 2>/dev/null"
+      -- Smart git commit with AI assistance
+      local function smart_commit()
+        -- Get git diff (staged first, then unstaged if no staged changes)
+        local staged_diff = vim.fn.system "git diff --cached"
+        local diff = staged_diff
+        local diff_type = "staged"
 
-  -- Build the prompt
-  local prompt = [[## Task: Create a Git Commit Message
+        -- If no staged changes, get unstaged changes
+        if vim.fn.trim(staged_diff) == "" then
+          diff = vim.fn.system "git diff"
+          diff_type = "unstaged"
+        end
+
+        -- If still no changes, check for untracked files
+        if vim.fn.trim(diff) == "" then
+          local status = vim.fn.system "git status --short"
+          if vim.fn.trim(status) == "" then
+            vim.notify("No changes to commit", vim.log.levels.WARN)
+            return
+          end
+          diff = "No diff available. Untracked files:\n" .. status
+          diff_type = "untracked"
+        end
+
+        -- Get recent commit messages for style reference
+        local recent_commits = vim.fn.system "git log --oneline -5 2>/dev/null"
+
+        -- Build the prompt
+        local prompt = [[## Task: Create a Git Commit Message
 
 Analyze the following git changes and propose a concise commit message.
 
@@ -49,33 +68,14 @@ Analyze the following git changes and propose a concise commit message.
 
 Propose a commit message based on these changes.]]
 
-  -- Open sidekick and send the prompt
-  local sidekick_cli = require "sidekick.cli"
-  sidekick_cli.toggle { focus = true }
+        -- Open sidekick and send the prompt
+        local sidekick_cli = require "sidekick.cli"
+        sidekick_cli.toggle { focus = true }
 
-  -- Wait for sidekick to open, then send the prompt
-  vim.defer_fn(function()
-    sidekick_cli.send { msg = prompt }
-  end, 500)
-end
-
-return {
-  {
-    "tpope/vim-fugitive",
-    lazy = false,
-    config = function()
-      -- Git remaps
-      vim.keymap.set("n", "<leader>gs", ":G<CR>", { desc = "Git status" })
-      vim.keymap.set("n", "<leader>ga", ":G add %<CR>", { desc = "Git add current file" })
-      vim.keymap.set("n", "<leader>gA", ":G add .<CR>", { desc = "Git add all files" })
-      vim.keymap.set("n", "<leader>gc", ":G commit --no-verify<CR>", { desc = "Git commit" })
-
-      local function pre_commit_check()
-        local cmd = "pre-commit"
-
-        -- Run pre-commit hook on a split buffer bottom
-        vim.cmd "belowright vsplit"
-        vim.cmd("terminal " .. cmd)
+        -- Wait for sidekick to open, then send the prompt
+        vim.defer_fn(function()
+          sidekick_cli.send { msg = prompt }
+        end, 500)
       end
 
       -- Verify precommit hooks with pre-commit cmd
