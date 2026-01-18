@@ -31,10 +31,10 @@ local function navigate(direction)
     -- Handle tmux window navigation with wrap-around
     if direction == "h" then
       -- For left navigation, go to previous window with wrap-around
-      vim.fn.system("tmux select-window -t -1")
+      vim.fn.system "tmux select-window -t -1"
     elseif direction == "l" then
       -- For right navigation, go to next window with wrap-around
-      vim.fn.system("tmux select-window -t +1")
+      vim.fn.system "tmux select-window -t +1"
     end
   end
 end
@@ -90,5 +90,10 @@ map("t", "<esc>", "<C-\\><C-n>")
 -- Search mappings
 map("n", "<leader>sf", "<cmd>Telescope find_files<cr>", { desc = "Find files" })
 map("n", "<leader>sg", "<cmd>Telescope live_grep<cr>", { desc = "Live grep" })
+
+-- Terminal toggle
+map({ "n", "t" }, "<leader>;", function()
+  require("nvchad.term").toggle { pos = "float", id = "floatTerm" }
+end, { desc = "Toggle floating terminal" })
 
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
