@@ -48,4 +48,23 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
 -- Restore last opened file per project
 require("project-last-file").setup()
 
+-- Claude Code hooks user commands
+local claude_hooks = require "ai-tools.claude-hooks"
+
+vim.api.nvim_create_user_command("ClaudeHooksSetup", function()
+  claude_hooks.setup()
+end, { desc = "Setup Claude Code hooks" })
+
+vim.api.nvim_create_user_command("ClaudeHooksCleanup", function()
+  claude_hooks.cleanup()
+end, { desc = "Remove Claude Code hooks" })
+
+vim.api.nvim_create_user_command("ClaudeHooksStatus", function()
+  if claude_hooks.check_configured() then
+    vim.notify("Claude Code hooks are configured", vim.log.levels.INFO)
+  else
+    vim.notify("Claude Code hooks are not configured", vim.log.levels.WARN)
+  end
+end, { desc = "Check Claude Code hooks status" })
+
 return {}

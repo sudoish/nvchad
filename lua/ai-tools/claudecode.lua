@@ -1,8 +1,14 @@
 -- Claude Code AI integration
+local claude_hooks = require "ai-tools.claude-hooks"
+
 return {
   "coder/claudecode.nvim",
   dependencies = { "folke/snacks.nvim" },
-  config = true,
+  config = function()
+    -- Auto-setup Claude Code hooks when plugin loads
+    claude_hooks.auto_setup()
+    return true
+  end,
   keys = {
     { "<leader>a", nil, desc = "AI/Claude Code" },
     { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
