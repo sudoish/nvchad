@@ -31,10 +31,10 @@ local function navigate(direction)
     -- Handle tmux window navigation with wrap-around
     if direction == "h" then
       -- For left navigation, go to previous window with wrap-around
-      vim.fn.system("tmux select-window -t -1")
+      vim.fn.system "tmux select-window -t -1"
     elseif direction == "l" then
       -- For right navigation, go to next window with wrap-around
-      vim.fn.system("tmux select-window -t +1")
+      vim.fn.system "tmux select-window -t +1"
     end
   end
 end
