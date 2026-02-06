@@ -92,7 +92,7 @@ map("n", "<leader>sf", "<cmd>Telescope find_files<cr>", { desc = "Find files" })
 map("n", "<leader>sg", "<cmd>Telescope live_grep<cr>", { desc = "Live grep" })
 
 -- Terminal toggle
-map({ "n", "t" }, "<leader>;", function()
+map("n", "<leader>;", function()
   require("nvchad.term").toggle { pos = "float", id = "floatTerm" }
 end, { desc = "Toggle floating terminal" })
 
