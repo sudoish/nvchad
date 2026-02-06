@@ -190,3 +190,6 @@ Run tests using Neotest:
 ## 📄 License
 
 This configuration follows the same license as NvChad.
+
+---
+*Last updated: February 2026*

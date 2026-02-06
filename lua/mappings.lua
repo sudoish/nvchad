@@ -86,6 +86,13 @@ end
 map("n", "<Leader>fs", save_buffer, { desc = "Save file" })
 
 map("t", "<esc>", "<C-\\><C-n>")
+map("t", "<S-Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+
+-- Terminal mode navigation (for Claude Code pane, etc.)
+map("t", "<C-h>", "<C-\\><C-n><C-w>h", { desc = "Navigate left from terminal" })
+map("t", "<C-j>", "<C-\\><C-n><C-w>j", { desc = "Navigate down from terminal" })
+map("t", "<C-k>", "<C-\\><C-n><C-w>k", { desc = "Navigate up from terminal" })
+map("t", "<C-l>", "<C-\\><C-n><C-w>l", { desc = "Navigate right from terminal" })
 
 -- Search mappings
 map("n", "<leader>sf", "<cmd>Telescope find_files<cr>", { desc = "Find files" })

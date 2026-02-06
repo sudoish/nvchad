@@ -9,7 +9,8 @@ local ai_tools = require "ai-tools"
 
 -- CHAT TOOL: AI assistant for conversation and code generation
 -- Available options: "claudecode", "sidekick", "amp", "augment", "droid", or nil to disable
-local CHAT_TOOL = "sidekick"
+-- NOTE: Disabled - using claudecode.nvim directly from lua/plugins/claudecode.lua
+local CHAT_TOOL = nil
 
 -- COMPLETION TOOL: Inline code completion
 -- Available options: "supermaven", "copilot", or nil to disable
