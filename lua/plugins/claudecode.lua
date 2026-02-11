@@ -47,7 +47,7 @@ return {
       vertical_split = true,
       open_in_current_tab = true,
       show_diff_stats = true,
-      keep_terminal_focus = true, -- Return focus to terminal after diff opens
+      keep_terminal_focus = false, -- Focus editor when diff opens
     },
   },
   keys = {
