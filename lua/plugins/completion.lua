@@ -14,7 +14,7 @@ local CHAT_TOOL = nil
 
 -- COMPLETION TOOL: Inline code completion
 -- Available options: "supermaven", "copilot", or nil to disable
-local COMPLETION_TOOL = "supermaven"
+local COMPLETION_TOOL = "copilot"
 
 --------------------------------------------------------------------------------
 

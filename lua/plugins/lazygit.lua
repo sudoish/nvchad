@@ -20,9 +20,9 @@ return {
   config = function()
     local function lazygit_cancel()
       local curr_buf = vim.api.nvim_get_current_buf()
-      local curr_buf_name = vim.api.nvim_buf_get_name(curr_buf)
+      -- local curr_buf_name = vim.api.nvim_buf_get_name(curr_buf)
 
-      print("curr_buf_name: ", curr_buf_name)
+      -- print("curr_buf_name: ", curr_buf_name)
     end
 
     -- Cancel lazygit action with <esc>
