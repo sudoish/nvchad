@@ -1,6 +1,8 @@
 -- Sidekick.nvim - Universal AI CLI integration
+-- Manages all AI tool terminals: claude, opencode, codex, gemini, etc.
+-- Claude Code's MCP server runs headlessly via claudecode.nvim (plugins/claudecode.lua)
 
-local DEFAULT_TOOL = "opencode"
+local DEFAULT_TOOL = "claude"
 
 return {
   "folke/sidekick.nvim",
@@ -9,6 +11,12 @@ return {
       default = DEFAULT_TOOL,
       tools = {
         -- Custom tools for resume/continue with flags
+        ["claude-resume"] = {
+          cmd = { "claude", "--resume" },
+        },
+        ["claude-continue"] = {
+          cmd = { "claude", "--continue" },
+        },
         ["opencode-resume"] = {
           cmd = { "opencode", "--resume" },
         },
@@ -19,12 +27,13 @@ return {
     },
   },
   keys = {
+    -- Toggle / focus the active AI tool
     {
       "<leader>ac",
       function()
         require("sidekick.cli").toggle { focus = true }
       end,
-      desc = "Toggle Opencode",
+      desc = "Toggle AI",
       mode = { "n", "v" },
     },
     {
@@ -32,22 +41,28 @@ return {
       function()
         require("sidekick.cli").focus()
       end,
-      desc = "Focus Opencode",
+      desc = "Focus AI",
     },
+    -- Resume / continue (uses the currently active tool, falls back to default)
     {
       "<leader>ar",
       function()
-        require("sidekick.cli").toggle { name = "opencode-resume", focus = true }
+        local sessions = require("sidekick.status").cli()
+        local tool = (sessions[1] and sessions[1].tool) or DEFAULT_TOOL
+        require("sidekick.cli").toggle { name = tool .. "-resume", focus = true }
       end,
-      desc = "Resume Opencode",
+      desc = "Resume AI session",
     },
     {
       "<leader>aC",
       function()
-        require("sidekick.cli").toggle { name = "opencode-continue", focus = true }
+        local sessions = require("sidekick.status").cli()
+        local tool = (sessions[1] and sessions[1].tool) or DEFAULT_TOOL
+        require("sidekick.cli").toggle { name = tool .. "-continue", focus = true }
       end,
-      desc = "Continue Opencode",
+      desc = "Continue AI session",
     },
+    -- Switch between AI tools
     {
       "<leader>am",
       function()
@@ -55,6 +70,7 @@ return {
       end,
       desc = "Select AI tool",
     },
+    -- Send context to active tool
     {
       "<leader>ab",
       function()
@@ -68,22 +84,9 @@ return {
         require("sidekick.cli").send { msg = "{position}" }
       end,
       mode = "v",
-      desc = "Send to Opencode",
+      desc = "Send selection to AI",
     },
-    {
-      "<leader>ay",
-      function()
-        require("sidekick.ui").accept()
-      end,
-      desc = "Accept diff",
-    },
-    {
-      "<leader>ad",
-      function()
-        require("sidekick.ui").reject()
-      end,
-      desc = "Deny diff",
-    },
+    -- Quick toggle
     {
       "<c-.>",
       function()
@@ -92,7 +95,8 @@ return {
       desc = "Sidekick Toggle",
       mode = { "n", "t", "i", "x" },
     },
-    { "<c-h>", "<cmd>wincmd h<cr>", desc = "Navigate to left window", mode = { "n", "t" } },
+    -- <C-h> navigation handled by mappings.lua (smart vim/tmux navigation)
+    -- Copilot NES (Next Edit Suggestions)
     {
       "<tab>",
       function()
