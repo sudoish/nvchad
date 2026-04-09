@@ -50,11 +50,10 @@ return {
         return review_cache
       end
       -- Fetch title and body from gh CLI (once per PR)
-      local result = vim.fn.system(
-        string.format("gh pr view %d --json title,body --jq '[.title, .body] | @tsv'", pr_number)
-      )
+      local result =
+        vim.fn.system(string.format("gh pr view %d --json title,body --jq '[.title, .body] | @tsv'", pr_number))
       if vim.v.shell_error == 0 then
-        local title, body = result:match("^(.-)\t(.*)$")
+        local title, body = result:match "^(.-)\t(.*)$"
         review_cache.pr_number = pr_number
         review_cache.title = title or "Unknown PR"
         review_cache.body = (body or ""):gsub("%s+$", "")
@@ -69,7 +68,7 @@ return {
     local function get_review_filepath()
       local bufname = vim.api.nvim_buf_get_name(0)
       if not review_cache.git_root then
-        local root = vim.fn.trim(vim.fn.system("git rev-parse --show-toplevel"))
+        local root = vim.fn.trim(vim.fn.system "git rev-parse --show-toplevel")
         if vim.v.shell_error == 0 then
           review_cache.git_root = root
         else
@@ -117,10 +116,10 @@ return {
         selection.text
       )
 
-      local sidekick_cli = require("sidekick.cli")
-      sidekick_cli.toggle({ focus = true })
+      local sidekick_cli = require "sidekick.cli"
+      sidekick_cli.toggle { focus = true }
       vim.defer_fn(function()
-        sidekick_cli.send({ msg = prompt })
+        sidekick_cli.send { msg = prompt }
       end, 500)
     end
 

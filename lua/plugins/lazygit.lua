@@ -18,12 +18,7 @@ return {
     { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
   },
   config = function()
-    local function lazygit_cancel()
-      local curr_buf = vim.api.nvim_get_current_buf()
-      -- local curr_buf_name = vim.api.nvim_buf_get_name(curr_buf)
-
-      -- print("curr_buf_name: ", curr_buf_name)
-    end
+    local function lazygit_cancel() end
 
     -- Cancel lazygit action with <esc>
     vim.keymap.set("i", "<C-W>", lazygit_cancel, { desc = "Cancel lazygit action" })
