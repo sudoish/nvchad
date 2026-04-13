@@ -60,7 +60,7 @@ jobs:
         run: luarocks install busted
 
       - name: Run AI workflow specs
-        run: ~/.luarocks/bin/busted tests/opencode_spec.lua specs/task_workflow_spec.lua specs/task_workflow_config_spec.lua
+        run: busted tests/opencode_spec.lua specs/task_workflow_spec.lua specs/task_workflow_config_spec.lua
 
   format:
     runs-on: ubuntu-latest
