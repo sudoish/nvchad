@@ -4,6 +4,9 @@
 std = "lua54"
 max_code_line_length = 120
 max_string_line_length = 120
+exclude_files = {
+  ".trees/**",
+}
 
 -- Ignore unused arguments that end with underscore
 ignore = {
