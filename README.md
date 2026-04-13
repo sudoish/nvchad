@@ -18,7 +18,7 @@ A feature-rich Neovim configuration based on [NvChad v3.0](https://github.com/Nv
 
 - Neovim 0.9+
 - Git
-- (Optional) tmux (recommended for task workflow)
+- tmux for the AI task workflow (`<leader>at` requires running inside tmux)
 
 ### Installation
 

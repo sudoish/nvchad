@@ -25,7 +25,7 @@ Apply this review in seven passes:
 6. Naming, clarity, and maintainability
 7. Performance and unnecessary complexity
 
-For each pass, either record findings or explicitly note that nothing needs flagging.
+Use the seven passes to drive your inspection, but do not emit a pass-by-pass section in the final answer. Fold the resulting findings into the required severity buckets below.
 
 ## Ground Rules
 
@@ -45,6 +45,8 @@ Start with two short lines:
 
 - One sentence describing what the branch does
 - One sentence stating whether this was a quick branch review or whether the branch appeared to have explicit acceptance criteria
+
+If one of the seven passes found nothing worth flagging, do not add filler text for that pass.
 
 Then use this format exactly:
 
