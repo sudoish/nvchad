@@ -42,6 +42,26 @@ jobs:
       - name: Run luacheck
         run: luacheck .
 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Lua
+        uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "5.4.0"
+
+      - name: Install LuaRocks
+        run: sudo apt-get update && sudo apt-get install -y luarocks
+
+      - name: Install busted
+        run: luarocks install busted
+
+      - name: Run AI workflow specs
+        run: ~/.luarocks/bin/busted tests/opencode_spec.lua specs/task_workflow_spec.lua specs/task_workflow_config_spec.lua
+
   format:
     runs-on: ubuntu-latest
     steps:
