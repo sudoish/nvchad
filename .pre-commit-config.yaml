@@ -40,3 +40,10 @@ repos:
         language: system
         pass_filenames: false
         files: \.lua$
+
+      - id: ai-workflow-specs
+        name: ai-workflow-specs
+        entry: ~/.luarocks/bin/busted tests/opencode_spec.lua specs/task_workflow_spec.lua specs/task_workflow_config_spec.lua
+        language: system
+        pass_filenames: false
+        files: \.lua$
