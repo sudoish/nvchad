@@ -47,16 +47,18 @@ Neovim will automatically:
 
 Start the AI task workflow with `<leader>at` to:
 1. Input your task description
-2. Create a git worktree (optional)
-3. Open a new tmux session
-4. Launch your preferred AI chat agent
+2. Create a git worktree
+3. Open a new tmux window
+4. Launch the configured AI tool in the new Neovim instance
 
-AI tools are configured in `lua/ai-tools/` and include:
-- **claudecode**: Native Claude Code integration
-- **sidekick**: Universal CLI wrapper for Claude, Droid, etc.
-- **amp**: Sourcegraph Amp
-- **supermaven**: Fast inline code completion
-- **copilot**: GitHub Copilot
+The current AI integrations are configured primarily in `lua/plugins/`:
+- `claudecode.lua` - Claude Code MCP integration
+- `sidekick.lua` - AI CLI terminal management and prompt sending
+- `opencode.lua` - Opencode integration and keymaps
+- `task-workflow.lua` - task workflow keybinding entrypoint
+- `pr-review.lua` - PR review integration with optional AI assistance
+
+The workflow orchestration logic lives in `lua/ai-tools/task-workflow/` and the branch review prompt lives in `prompts/review-branch.md`.
 
 ### Key Mappings
 
@@ -83,25 +85,23 @@ lua/
 ├── configs/          # Plugin-specific configurations
 ├── plugins/          # Plugin specifications
 │   ├── init.lua      # Core plugins (conform, lspconfig, blink)
-│   └── *.lua         # Feature plugins (git, testing, obsidian, etc.)
-└── ai-tools/         # AI tool configurations
-    ├── init.lua      # Tool selection system
-    ├── task-workflow/# Task workflow orchestration
-    └── *.lua         # Individual AI tool configs
+│   └── *.lua         # Feature plugins, including AI integrations
+└── ai-tools/         # Workflow helpers used by AI features
+    ├── task-input.lua
+    └── task-workflow/
+        ├── config.lua
+        └── init.lua
 ```
 
 ### Customization
 
-To customize AI tools, modify `lua/ai-tools/init.lua`:
+To customize AI behavior, edit the relevant plugin specs under `lua/plugins/` and the workflow files under `lua/ai-tools/task-workflow/`.
 
-```lua
--- Enable specific AI tools by editing your plugin specs
--- in lua/plugins/*.lua files
-
--- Example: Use Claude Code + Supermaven
-require "ai-tools.claudecode"
-require "ai-tools.supermaven"
-```
+Common entry points:
+- `lua/plugins/sidekick.lua` for AI terminal behavior and prompts
+- `lua/plugins/claudecode.lua` for Claude Code MCP settings
+- `lua/plugins/opencode.lua` for Opencode behavior and mappings
+- `lua/ai-tools/task-workflow/config.lua` for workflow defaults
 
 ## 🛠️ Development
 
@@ -116,6 +116,9 @@ luacheck .
 
 # Validate Neovim config
 nvim --headless -u init.lua -c "lua vim.cmd('quit')"
+
+# Run AI workflow specs
+~/.luarocks/bin/busted tests/opencode_spec.lua specs/task_workflow_spec.lua specs/task_workflow_config_spec.lua
 
 # Run pre-commit hooks
 pre-commit run --all-files
@@ -164,15 +167,15 @@ This repo uses NvChad v3.0 as a plugin, not as a base installation:
 - **UI**: telescope.nvim, lualine.nvim, nvim-tree, oil.nvim
 - **Git**: gitsigns.nvim, lazygit.nvim
 - **Testing**: neotest
-- **AI**: Various AI assistants (see AI Tools section)
+- **AI**: Claude Code, Sidekick, Opencode, and PR review helpers
 - **Productivity**: harpoon, obsidian.nvim
 
 ## 🧪 Testing
 
-Run tests using Neotest:
+Run focused Lua specs from the command line:
 
-```vim
-:Neotest run
+```bash
+~/.luarocks/bin/busted tests/opencode_spec.lua specs/task_workflow_spec.lua specs/task_workflow_config_spec.lua
 ```
 
 ## 📝 Notes

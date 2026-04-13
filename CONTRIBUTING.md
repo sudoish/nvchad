@@ -42,6 +42,9 @@ luacheck .
 
 # Test configuration
 nvim --headless -u init.lua -c "lua vim.cmd('quit')"
+
+# Run AI workflow specs
+~/.luarocks/bin/busted tests/opencode_spec.lua specs/task_workflow_spec.lua specs/task_workflow_config_spec.lua
 ```
 
 ### Create Pull Request
@@ -114,9 +117,10 @@ nvim --headless -u init.lua -c "lua vim.cmd('quit')"
 
 ### Test Suite
 
-Run tests using Neotest:
-```
-:Neotest run
+Run the focused Lua specs from the command line:
+
+```bash
+~/.luarocks/bin/busted tests/opencode_spec.lua specs/task_workflow_spec.lua specs/task_workflow_config_spec.lua
 ```
 
 ## Plugin Guidelines
@@ -165,6 +169,7 @@ return {
 - `README.md`: User-facing documentation
 - `AGENTS.md`: Developer documentation for AI agents
 - `CONTRIBUTING.md`: This file
+- `prompts/review-branch.md`: Repo-local AI review prompt
 - Inline comments: For complex logic
 
 ## Project Structure
@@ -189,8 +194,9 @@ return {
 │   │   ├── init.lua
 │   │   ├── completion.lua
 │   │   └── ...
-│   └── ai-tools/        # AI tool configurations
-│       └── init.lua
+│   └── ai-tools/        # Task workflow helpers
+│       ├── task-input.lua
+│       └── task-workflow/
 ├── tests/
 │   └── config_spec.lua  # Configuration tests
 ├── .luacheckrc          # Lua linter config
