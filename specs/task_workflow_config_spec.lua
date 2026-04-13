@@ -33,27 +33,13 @@ describe("ai-tools.task-workflow.config", function()
     end)
   end)
 
-  describe("max_slug_length", function()
-    it("exists", function()
-      assert.is_not_nil(config.max_slug_length)
-    end)
-
-    it("equals 15", function()
-      assert.are.equal(15, config.max_slug_length)
-    end)
-
-    it("is a number", function()
-      assert.is_number(config.max_slug_length)
-    end)
-  end)
-
   describe("default_ai_tool", function()
     it("exists", function()
       assert.is_not_nil(config.default_ai_tool)
     end)
 
-    it("equals 'droid'", function()
-      assert.are.equal("droid", config.default_ai_tool)
+    it("equals 'claude'", function()
+      assert.are.equal("claude", config.default_ai_tool)
     end)
 
     it("is a string", function()
@@ -99,11 +85,36 @@ describe("ai-tools.task-workflow.config", function()
     end)
   end)
 
+  describe("git_flow", function()
+    it("exists", function()
+      assert.is_not_nil(config.git_flow)
+    end)
+
+    it("is a table", function()
+      assert.is_table(config.git_flow)
+    end)
+
+    it("is enabled", function()
+      assert.is_true(config.git_flow.enabled)
+    end)
+
+    it("uses feature as the default type", function()
+      assert.are.equal("feature", config.git_flow.default_type)
+    end)
+  end)
+
   describe("expected keys are present", function()
     it("has all required top-level keys", function()
-      local expected_keys = { "trees_folder", "max_slug_length", "default_ai_tool", "notifications" }
+      local expected_keys = { "trees_folder", "default_ai_tool", "git_flow", "notifications" }
       for _, key in ipairs(expected_keys) do
         assert.is_not_nil(config[key], "Missing key: " .. key)
+      end
+    end)
+
+    it("has all required git_flow keys", function()
+      local expected_keys = { "enabled", "default_type", "types" }
+      for _, key in ipairs(expected_keys) do
+        assert.is_not_nil(config.git_flow[key], "Missing git_flow key: " .. key)
       end
     end)
 

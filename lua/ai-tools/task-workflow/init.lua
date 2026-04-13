@@ -160,9 +160,10 @@ function M.create_environment(task, callback)
     return
   end
 
+  local git_flow = config.git_flow or {}
   local branch_name
-  if config.git_flow.enabled then
-    branch_name = config.git_flow.default_type .. "/" .. slug
+  if git_flow.enabled then
+    branch_name = (git_flow.default_type or "feature") .. "/" .. slug
   else
     branch_name = slug
   end

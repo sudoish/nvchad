@@ -85,6 +85,9 @@ describe("ai-tools.task-workflow", function()
       kill_window = function()
         return { success = true }
       end,
+      generate_safe_name = function(text)
+        return text:lower():gsub("%s+", "_")
+      end,
       validate_window_name = function()
         return true, nil
       end,
@@ -93,8 +96,11 @@ describe("ai-tools.task-workflow", function()
     -- Mock config module
     mock_config = {
       trees_folder = ".trees",
-      max_slug_length = 15,
-      default_ai_tool = "droid",
+      default_ai_tool = "claude",
+      git_flow = {
+        enabled = true,
+        default_type = "feature",
+      },
       notifications = {
         success = true,
         errors = true,
@@ -295,7 +301,7 @@ describe("ai-tools.task-workflow", function()
       task_workflow.create_environment(test_task, function() end)
 
       assert.is_not_nil(window_name, "should call tmux.create_window")
-      assert.truthy(window_name:match "my%-test%-task", "window name should be slugified")
+      assert.truthy(window_name:match "my_test_task", "window name should use tmux-safe naming")
     end)
 
     it("cleans up on worktree failure", function()
