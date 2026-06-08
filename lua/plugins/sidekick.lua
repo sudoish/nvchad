@@ -18,7 +18,7 @@ local function review_branch_prompt()
     return nil
   end
 
-  local path = vim.fn.stdpath("config") .. "/prompts/review-branch.md"
+  local path = vim.fn.stdpath "config" .. "/prompts/review-branch.md"
   local ok, lines = pcall(vim.fn.readfile, path)
   if not ok or not lines or #lines == 0 then
     vim.notify("Could not read prompt template: " .. path, vim.log.levels.ERROR)
